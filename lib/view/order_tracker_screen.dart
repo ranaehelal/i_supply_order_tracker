@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:i_supply_order_tracker/services/fcm_service.dart';
 import 'package:i_supply_order_tracker/viewmodel/order_viewmodel.dart';
 import 'package:provider/provider.dart';
 import '../model/order_status_enum.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../services/notification_service.dart';
 
 class OrderTrackerScreen extends StatelessWidget {
   const OrderTrackerScreen({super.key});
@@ -22,8 +20,8 @@ class OrderTrackerScreen extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: null,
-        ),
+          onPressed: ()=> _handleBackButton(context, vm),
+      ),
         title: Text(
         'Order Tracker',
         style: GoogleFonts.lexend(
@@ -293,6 +291,38 @@ class OrderTrackerScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _handleBackButton(BuildContext context, OrderViewModel vm) {
+    if (vm.isOrderInFinalState) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Start New Order Demo?'),
+            content: Text(
+                'Current order is ${vm.status.label.toLowerCase()}. Do you want to start a new order tracking demo?'
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  vm.resetOrder();
+                },
+                child: const Text('Start New Demo'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      // Normal back button behavior (exit app or navigate back)
+      Navigator.of(context).maybePop();
+    }
   }
   void _showCancelDialog(BuildContext context, OrderViewModel vm) {
     showDialog(
