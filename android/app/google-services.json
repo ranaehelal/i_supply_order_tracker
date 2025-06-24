@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "906817143737",
+    "project_id": "isupplyordertracker",
+    "storage_bucket": "isupplyordertracker.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:906817143737:android:bfd4e77ee1a5cf616bec68",
+        "android_client_info": {
+          "package_name": "com.example.i_supply_order_tracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_cOU2hKBxAUZaiZeaIIg2HtxTdTol-Tk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
