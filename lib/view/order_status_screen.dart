@@ -1,40 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:i_supply_order_tracker/services/fcm_service.dart';
-import 'OrderStatus.dart';
+import 'package:i_supply_order_tracker/viewmodel/order_viewmodel.dart';
+import 'package:provider/provider.dart';
+import '../model/order_status_enum.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'notification_service.dart';
+import '../services/notification_service.dart';
 
-class OrderTrackerScreen extends StatefulWidget {
+class OrderTrackerScreen extends StatelessWidget {
   const OrderTrackerScreen({super.key});
 
   @override
-  _OrderTrackerScreenState createState() => _OrderTrackerScreenState();
-}
-
-class _OrderTrackerScreenState extends State<OrderTrackerScreen> {
-  OrderStatus currentStatus = OrderStatus.pending;
-
-  Future<void> updateStatus(OrderStatus newStatus) async {
-    final oldStatus = currentStatus;
-
-    if (newStatus.index > currentStatus.index) {
-      setState(() {
-        currentStatus = newStatus;
-      });
-
-      print("Order status updated from ${oldStatus.label} to ${newStatus.label}");
-
-      await showSimpleNotification(
-          title: 'Order Status Update 🚚',
-          body: 'Order status updated from ${oldStatus.label} to ${newStatus.label}');
-    } else {
-      print("Cannot update status from ${currentStatus.label} to ${newStatus.label}");
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final vm=Provider.of<OrderViewModel>(context);
+    final currentStatus=vm.status;
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -141,7 +121,7 @@ class _OrderTrackerScreenState extends State<OrderTrackerScreen> {
                   const SizedBox(height: 24),
 
                   // Status Timeline
-                  _buildStatusTimeline(),
+                  _buildStatusTimeline(vm),
 
                   const SizedBox(height: 40),
                   Container(
@@ -162,7 +142,7 @@ class _OrderTrackerScreenState extends State<OrderTrackerScreen> {
                           'Confirm',
                           const Color(0xFF82D0F5),
                           currentStatus == OrderStatus.pending
-                              ? () => updateStatus(OrderStatus.confirmed)
+                              ? () => vm.updateStatus(OrderStatus.confirmed)
                               : null,
                         ),
 
@@ -173,7 +153,7 @@ class _OrderTrackerScreenState extends State<OrderTrackerScreen> {
                           'Ship',
                           const Color(0xFF82D0F5),
                           currentStatus == OrderStatus.confirmed
-                              ? () => updateStatus(OrderStatus.shipped)
+                              ? () => vm.updateStatus(OrderStatus.shipped)
                               : null,
                         ),
 
@@ -184,7 +164,7 @@ class _OrderTrackerScreenState extends State<OrderTrackerScreen> {
                           'Deliver',
                           const Color(0xFF82D0F5),
                           currentStatus == OrderStatus.shipped
-                              ? () => updateStatus(OrderStatus.delivered)
+                              ? () => vm.updateStatus(OrderStatus.delivered)
                               : null,
                         ),
 
@@ -195,7 +175,7 @@ class _OrderTrackerScreenState extends State<OrderTrackerScreen> {
                           'Cancel',
                           const Color(0xFFE57373),
                           currentStatus != OrderStatus.delivered
-                              ? () => _showCancelDialog()
+                              ? () => _showCancelDialog(context, vm)
                               : null,
                           textColor: Colors.white,
                         ),
@@ -217,7 +197,7 @@ class _OrderTrackerScreenState extends State<OrderTrackerScreen> {
     );
   }
 
-  Widget _buildStatusTimeline() {
+  Widget _buildStatusTimeline(OrderViewModel vm){
     final trackableStatuses = [
       OrderStatus.pending,
       OrderStatus.confirmed,
@@ -229,7 +209,7 @@ class _OrderTrackerScreenState extends State<OrderTrackerScreen> {
       children: trackableStatuses.asMap().entries.map((entry) {
         final index = entry.key;
         final status = entry.value;
-        final isCompleted = currentStatus.indexInTrack >= status.indexInTrack;
+        final isCompleted = vm.status.indexInTrack >= status.indexInTrack;
         final isLast = index == trackableStatuses.length - 1;
 
         return Row(
@@ -314,8 +294,7 @@ class _OrderTrackerScreenState extends State<OrderTrackerScreen> {
       ),
     );
   }
-
-  void _showCancelDialog() {
+  void _showCancelDialog(BuildContext context, OrderViewModel vm) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -330,15 +309,12 @@ class _OrderTrackerScreenState extends State<OrderTrackerScreen> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                setState(() {
-                  currentStatus = OrderStatus.cancelled;
-                });
+                vm.cancelOrder();
               },
               child: const Text('Yes'),
             ),
           ],
         );
       },
-    );
-  }
+    );}
 }

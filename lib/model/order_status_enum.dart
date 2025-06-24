@@ -1,4 +1,4 @@
-//lib/OrderStatus.dart
+//lib/order_status_enum.dart
 import 'package:flutter/material.dart';
 
 enum OrderStatus {
@@ -84,6 +84,30 @@ extension OrderStatusExtension on OrderStatus {
         return "Order has been cancelled";
     }
   }
+
+  // Converts enum to string (e.g., OrderStatus.pending → "pending")
+  String get asString {
+    return toString().split('.').last;
+  }
 }
 
 
+// Converts string (e.g., "shipped") to enum (e.g., OrderStatus.shipped)
+extension OrderStatusFromString on String {
+  OrderStatus? toOrderStatus() {
+    switch (toLowerCase()) {
+      case 'pending':
+        return OrderStatus.pending;
+      case 'confirmed':
+        return OrderStatus.confirmed;
+      case 'shipped':
+        return OrderStatus.shipped;
+      case 'delivered':
+        return OrderStatus.delivered;
+      case 'cancelled':
+        return OrderStatus.cancelled;
+      default:
+        return null;
+    }
+  }
+}

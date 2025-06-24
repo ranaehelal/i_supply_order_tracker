@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
-import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'notification_service.dart';
-import 'order_status_screen.dart';
-
+import 'services/notification_service.dart';
+import 'view/order_status_screen.dart';
+import 'viewmodel/order_viewmodel.dart';
+import 'repository/notification_repository.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -34,7 +34,10 @@ void main() async {
   });
 
   runApp(
-   MyApp()
+    ChangeNotifierProvider(
+      create: (_) => OrderViewModel(NotificationRepository()),
+      child: MyApp(),
+    ),
   );
 }
 
