@@ -106,5 +106,3 @@ Flutter Developer & AI Enthusiast
 ## 🛡️ License
 
 This project is for demo and assessment purposes only. All rights reserved to the iSUPPLY Team.
-
-```
