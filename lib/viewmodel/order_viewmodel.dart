@@ -1,4 +1,5 @@
 // viewmodel/order_viewmodel.dart
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../model/order_status_enum.dart';
 import '../repository/notification_repository.dart';
@@ -18,6 +19,14 @@ class OrderViewModel extends ChangeNotifier {
       final oldStatus = _status;
       _status = newStatus;
       notifyListeners();
+
+      // Save to Firestore
+      await FirebaseFirestore.instance
+          .collection('orders')
+          .doc('order_123')
+          .set({'status': newStatus.asString});
+
+      // Notifications
 
       await notificationRepo.showLocalNotification(
         title: 'Order Status Update 🚚',
@@ -41,6 +50,12 @@ class OrderViewModel extends ChangeNotifier {
     final oldStatus = _status;
     _status = OrderStatus.cancelled;
     notifyListeners();
+    // Save to Firestore
+    await FirebaseFirestore.instance
+        .collection('orders')
+        .doc('order_123')
+        .set({'status': _status.asString});
+
 
     // Show local notification for cancellation
     await notificationRepo.showLocalNotification(
@@ -62,6 +77,13 @@ class OrderViewModel extends ChangeNotifier {
   Future<void> resetOrder() async {
     _status = OrderStatus.pending;
     notifyListeners();
+
+    // Save to Firestore
+    await FirebaseFirestore.instance
+        .collection('orders')
+        .doc('order_123')
+        .set({'status': _status.asString});
+
 
     // Show local notification for reset
     await notificationRepo.showLocalNotification(
