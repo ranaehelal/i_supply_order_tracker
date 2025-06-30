@@ -41,7 +41,6 @@ This is a Flutter-based order tracking system built for **iSUPPLY B2B pharmacy**
    ```bash
    git clone https://github.com/ranaehelal/i_supply_order_tracker.git
    cd isupply-order-tracker
-````
 
 2. **Install dependencies**
 
